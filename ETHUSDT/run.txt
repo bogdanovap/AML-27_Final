@@ -1,0 +1,8 @@
+from main_DQL import *
+from TradingEnv import Trading
+qmodel = QModel(_history_1=5, _vector_1=17, _history_2=5, _vector_2=17)
+env = Trading("bn_ETHUSDT", stoploss=0.050, max_dd=0.30)
+env.load_data(env.model_name)
+env.model_name = "bn_ETHUSDT_bb22_1D-5_sl5p_maxdd30 old formula_2lstm3dense100n_dropout 0.1_lr0025_softmax_profit"
+env.data_length_1 = qmodel.history_1*qmodel.vector_1
+res = train(env, qmodel, random_cases=5000, epsilon=0.9, learning_rate=0.0025, use_accuracy=False, train_start_=0, max_steps_per_episode=1500, test_start_=1500, steps_test=500)
