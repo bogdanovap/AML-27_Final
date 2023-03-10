@@ -6,7 +6,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 class Trading:
 
-    def __init__(self, model_name, stoploss=10, max_dd=0.3, shuffle=False):
+    def __init__(self, model_name="ModelName", stoploss=10, max_dd=0.3, shuffle=False):
         self.model_name = model_name
 
         self.sc_X = MinMaxScaler(feature_range=(-1, 1))
@@ -25,8 +25,6 @@ class Trading:
         self.max_equity = 1.0
         self.min_after_max = 1.0
         self.max_drawdown = 0.0
-
-        self.load_data(self.model_name)
 
     def load_data(self, filename):
         # filename = f"C:\\Users\\Administrator\\AppData\\Roaming\\MetaQuotes\\Terminal\\Common\\Files\\data_for_ai_{filename}.csv"
@@ -95,9 +93,10 @@ class Trading:
         bar_start = self.get_datetime(self.current_bar)
         bar_end = ""  # self.get_datetime(self.current_bar+1)
 
-        _, r_base = self.get_reward(self.current_bar)
+        _, r_fact = self.get_reward(self.current_bar)
 
-        r_base *= action
+
+        r_base = r_fact * action
         r_base = -self.cost_of_non_pos if action == 0 else r_base
 
         if self.position != action:
@@ -138,4 +137,4 @@ class Trading:
         if (self.current_bar + 1 >= len(self.X) or self.steps_left == 0):
             done = 2
 
-        return self.get_state(self.current_bar, self.position), r_scaled, r_base, done, bar_start, bar_end
+        return self.get_state(self.current_bar, self.position), r_scaled, r_base, r_fact, done, bar_start, bar_end
